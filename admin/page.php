@@ -34,6 +34,7 @@ if ($call == 'edit') {
     $sections   = $dbConnection->getAllSections($id);
     $types      = getAllContentTypes();
 
+
     \Template::view('views/page.tpl', [
         'title'     => 'staticCMS Seite',
         'loggedIn'  => true,

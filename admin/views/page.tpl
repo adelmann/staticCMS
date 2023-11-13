@@ -125,7 +125,13 @@
                                                         <div class="form-group">
                                                             <label>{{ $key }}</label>
                                                             {% if ($fields[$key] == 'image') { %}
+                                                            <div class="input-group w-auto">
                                                                 <input name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" type="text" value="{{$contentData}}" class="form-control" />
+                                                                <button class="btn btn-primary chooseImage" type="button" data-target="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]">
+                                                                    Select
+                                                                </button>
+                                                            </div>
+
                                                             {% } elseif ($fields[$key] == 'text') { %}
                                                                 <textarea name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" class="form-control" >{{$contentData}}</textarea>
                                                             {% } elseif ($fields[$key] == 'string') { %}
@@ -198,5 +204,7 @@
         </div>
     </div>
 </div>
+
+{% include 'views/widget/mediaModal.tpl' %}
 
 {% endblock %}

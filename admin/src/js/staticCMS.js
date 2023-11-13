@@ -9,12 +9,16 @@ $(document).ready(function () {
                 isLink = elementName.indexOf('Link');
                 if (isLink !== -1) {
                     elementReturn =  elementReturn+'<br>CHOOSE LINK';
+                    elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="'+value+'" class="form-control" />';
                 } else {
                     elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="'+value+'" class="form-control" />';
                 }
             } else if (type == 'text') {
                 elementReturn =  elementReturn+'<textarea name="content['+sectionId+']['+newContentId+']['+elementName+']" class="form-control" >'+value+'</textarea>';
             } else if (type == 'image') {
+                elementReturn =  elementReturn+'<br> CHOOSE IMAGE';
+                elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="'+value+'" class="form-control" />';
+            } else if (type == 'link') {
                 elementReturn =  elementReturn+'<br> CHOOSE IMAGE';
                 elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="'+value+'" class="form-control" />';
             }
@@ -83,4 +87,45 @@ $(document).ready(function () {
 
     }
 
+    if ($('.chooseImage').length >= 1) {
+        $('.chooseImage').on('click', function() {
+            target = $(this).data('target');
+            getMediaDatas(target);
+        });
+    }
+
+    if ($('#mediaChoose img').length >= 1) {
+        $(document).on("click", '.chooseImage', function() {
+            alert('test');
+            // send2target = $('#mediaChoose #target').val();
+            // alert(send2target);
+        });
+
+
+    }
+
+    $(document).on('click', '#mediaChoose .chooseImage', function(){
+        send2target = $('#mediaChoose #target').val();
+        actValue    = $(this).attr('src');
+        $('input[name="'+send2target+'"]').val(actValue);
+        $('#mediaChoose').hide();
+    })
 });
+
+// MEDIAS
+function getMediaDatas(name) {
+    $.ajax({
+        url: baseLink+"ajax.php?call=getMedias"
+    }).done(function(response) {
+        mediaDatas = JSON.parse(response);
+        imageHTMLDatas = '';
+        Object.entries(mediaDatas).forEach(([key, value]) => {
+            imageHTMLDatas = imageHTMLDatas + "<div class='col-4'><img src='"+value+"' class='img-fluid btn btn-warning chooseImage' /></div>";
+        });
+        $('#mediaChoose #target').val(name);
+        $('#mediaChoose .row').html(' ');
+        $('#mediaChoose .row').append(imageHTMLDatas);
+    });
+
+    $('#mediaChoose').show();
+}

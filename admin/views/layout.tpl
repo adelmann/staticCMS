@@ -11,6 +11,7 @@
     <script src="src/js/jquery-3.6.0.min.js" defer></script>
     <script src="src/js/bootstrap.min.js" defer></script>
     <script src="src/js/staticCMS.js" defer></script>
+    <script>baseLink = 'https://staticcms.loc/admin/';</script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
