@@ -8,9 +8,12 @@ include 'base.php';
 
 require 'dbConnection.php';
 include 'Template.php';
-include 'functions.php';
 
 $dbConnection   = new \admin\dbConnection();
+
+include 'functions.php';
+
+
 $db             = $dbConnection->db;
 $call           = null;
 
@@ -110,9 +113,9 @@ if ($call == 'edit') {
         $contentBlock = $_POST['content'];
         foreach ($contentBlock as $sectionID=>$contents) {
 
-            foreach ($contents as $key=>$content) {
+            foreach ($contents as $key=>$contentDetails) {
 
-                $aContentData = $content;
+                $aContentData = $contentDetails;
                 unset($aContentData['internalName']);
                 unset($aContentData['title']);
                 unset($aContentData['subTitle']);
@@ -122,19 +125,29 @@ if ($call == 'edit') {
                 if ($key < 0) {
                     $sql = "REPLACE INTO content (internalName, title, subTitle, content, pageId, sectionId, type)";
                     $sql .= "VALUES (";
-                    $sql .= "'".$content['internalName']."',";
-                    $sql .= "'".$content['title']."',";
-                    $sql .= "'".$content['subTitle']."',";
+                    $sql .= "'".$contentDetails['internalName']."',";
+                    $sql .= "'".$contentDetails['title']."',";
+                    $sql .= "'".$contentDetails['subTitle']."',";
                     $sql .= "'".json_encode($aContentData)."',";
                     $sql .= "'".$id."',";
                     $sql .= "'".$sectionID."',";
-                    $sql .= "'".$content['type']."'";
+                    $sql .= "'".$contentDetails['type']."'";
                     $sql .= ");";
                     $dbConnection->db->exec($sql);
                 } else {
                     $existsContent = $dbConnection->dbQuery("SELECT count(*) as counter FROM content WHERE id = '" . $key . "'");
                     if ($existsContent['counter'] == 1) {
-                        die("UPDATE");
+                        $sql = "UPDATE content SET ";
+                        $sql .= "internalName = '".$contentDetails['internalName']."', ";
+                        $sql .= "title = '".$contentDetails['title']."', ";
+                        $sql .= "subTitle = '".$contentDetails['subTitle']."', ";
+                        $sql .= "content = '".escape_string(json_encode($aContentData))."',";
+                        $sql .= "pageId = '".$id."', ";
+                        $sql .= "sectionId = '".$sectionID."', ";
+                        $sql .= "type = '".$contentDetails['type']."' ";
+                        $sql .= "WHERE id = '".$key."';";
+                        $dbConnection->db->exec($sql);
+
                     }
                 }
 

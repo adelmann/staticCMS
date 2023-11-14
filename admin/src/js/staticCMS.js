@@ -16,11 +16,19 @@ $(document).ready(function () {
             } else if (type == 'text') {
                 elementReturn =  elementReturn+'<textarea name="content['+sectionId+']['+newContentId+']['+elementName+']" class="form-control" >'+value+'</textarea>';
             } else if (type == 'image') {
-                elementReturn =  elementReturn+'<br> CHOOSE IMAGE';
-                elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="'+value+'" class="form-control" />';
+                elementReturn =  elementReturn+'<div class="input-group w-auto">';
+                elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="" class="form-control" />';
+                elementReturn =  elementReturn+'<button class="btn btn-primary chooseImage" type="button" data-target="content['+sectionId+']['+newContentId+']['+elementName+']">';
+                elementReturn =  elementReturn+'Select';
+                elementReturn =  elementReturn+'</button>';
+                elementReturn =  elementReturn+'</div>';
             } else if (type == 'link') {
-                elementReturn =  elementReturn+'<br> CHOOSE IMAGE';
-                elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="'+value+'" class="form-control" />';
+                elementReturn =  elementReturn+'<div class="input-group w-auto">';
+                elementReturn =  elementReturn+'<input name="content['+sectionId+']['+newContentId+']['+elementName+']" type="text" value="" class="form-control" />';
+                elementReturn =  elementReturn+'<button class="btn btn-primary chooseLink" type="button" data-target="content['+sectionId+']['+newContentId+']['+elementName+']">';
+                elementReturn =  elementReturn+'Select';
+                elementReturn =  elementReturn+'</button>';
+                elementReturn =  elementReturn+'</div>';
             }
 
             elementReturn =  elementReturn+'</div>';
@@ -31,6 +39,7 @@ $(document).ready(function () {
 
     // check if page edit
     if ($('#pageEdit').length == 1) {
+
         basicContentElement = $('#basicContentEmpty').html();
         newContentId        = -1;
 
@@ -53,11 +62,7 @@ $(document).ready(function () {
 
                 for (var item in fields) {
                     addHTML = addElement(item,fields[ item ],'',newContentId, sectionId);
-                    console.log(addHTML);
                     $(this).closest('.sectionPart').find('.contentElements').find('.alert[data-contentid="'+newContentId+'"]').find('.col-8 .row').append(addHTML);
-                    //$(this).closest('.sectionPart').find('.contentTypeInfo').val(choosenContentType);
-                    //$(this).closest('.sectionPart').find('.elementForm').find('.row').append(addHTML);
-
                 }
 
                 /*
@@ -87,29 +92,22 @@ $(document).ready(function () {
 
     }
 
-    if ($('.chooseImage').length >= 1) {
-        $('.chooseImage').on('click', function() {
-            target = $(this).data('target');
-            getMediaDatas(target);
-        });
-    }
-
-    if ($('#mediaChoose img').length >= 1) {
-        $(document).on("click", '.chooseImage', function() {
-            alert('test');
-            // send2target = $('#mediaChoose #target').val();
-            // alert(send2target);
-        });
-
-
-    }
-
-    $(document).on('click', '#mediaChoose .chooseImage', function(){
+    $(document).on('click', '.selectImage', function(){
         send2target = $('#mediaChoose #target').val();
         actValue    = $(this).attr('src');
         $('input[name="'+send2target+'"]').val(actValue);
         $('#mediaChoose').hide();
     })
+
+    $(document).on('click', '.chooseImage', function(){
+        target = $(this).data('target');
+        getMediaDatas(target);
+    });
+
+    $(document).on('click', '.chooseLink', function(){
+        target = $(this).data('target');
+        getLinkDatas(target);
+    });
 });
 
 // MEDIAS
@@ -120,7 +118,7 @@ function getMediaDatas(name) {
         mediaDatas = JSON.parse(response);
         imageHTMLDatas = '';
         Object.entries(mediaDatas).forEach(([key, value]) => {
-            imageHTMLDatas = imageHTMLDatas + "<div class='col-4'><img src='"+value+"' class='img-fluid btn btn-warning chooseImage' /></div>";
+            imageHTMLDatas = imageHTMLDatas + "<div class='col-4'><img src='"+value+"' class='img-fluid btn btn-warning selectImage' /></div>";
         });
         $('#mediaChoose #target').val(name);
         $('#mediaChoose .row').html(' ');
@@ -128,4 +126,24 @@ function getMediaDatas(name) {
     });
 
     $('#mediaChoose').show();
+}
+
+function getLinkDatas(name) {
+    $.ajax({
+        url: baseLink+"ajax.php?call=getLinks"
+    }).done(function(response) {
+        mediaDatas = JSON.parse(response);
+        imageHTMLDatas = '';
+        console.log(mediaDatas);
+        /*
+        Object.entries(mediaDatas).forEach(([key, value]) => {
+            imageHTMLDatas = imageHTMLDatas + "<div class='col-4'><img src='"+value+"' class='img-fluid btn btn-warning selectImage' /></div>";
+        });
+         */
+        $('#linkChoose #target').val(name);
+        $('#linkChoose .row').html(' ');
+        $('#linkChoose .row').append(imageHTMLDatas);
+    });
+
+    $('#linkChoose').show();
 }

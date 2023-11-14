@@ -20,6 +20,7 @@
     <!-- Styles -->
     <link href="src/css/bootstrap.min.css" rel="stylesheet">
     <link href="src/css/all.css" rel="stylesheet">
+    <link href="src/css/staticCMS.css" rel="stylesheet">
 </head>
 <body>
 

@@ -12,6 +12,7 @@
     <script src="src/js/jquery-3.6.0.min.js" defer></script>
     <script src="src/js/bootstrap.min.js" defer></script>
     <script src="src/js/staticCMS.js" defer></script>
+    <script>baseLink = 'https://staticcms.loc/admin/';</script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -20,6 +21,7 @@
     <!-- Styles -->
     <link href="src/css/bootstrap.min.css" rel="stylesheet">
     <link href="src/css/all.css" rel="stylesheet">
+    <link href="src/css/staticCMS.css" rel="stylesheet">
 </head>
 <body>
 
@@ -135,7 +137,7 @@
                     <textarea class="form-control" name="description"><?php echo $page['description'] ?></textarea>
                 </div>
             </div>
-            <input type="submit" class="btn btn-primary" value="speichern">
+            <input type="submit" class="btn btn-primary fixedSaveButton" value="speichern">
         </div>
     </div>
 
@@ -172,6 +174,20 @@
                 </div>
                 <div class="row mb-3 justify-content-md-center">
                     <div class="col-12"><hr></div>
+                    <div class="col-6 elementChoose">
+                        Neues Element:
+                        <div class="input-group w-auto">
+                            <select class="chooseContentType form-control">
+                                <option value="none">Bitte wählen</option>
+                                <?php foreach($types as $type): ?>
+                                <option value="<?php echo $type['type'] ?>"><?php echo $type['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button class="btn btn-primary addContent" type="button">
+                                Hinzufügen
+                            </button>
+                        </div>
+                    </div>
                     <div class="col-12 elementForm">
                         <div class="contentElements">---</div>
                         <?php $sectionContent = getSectionContentByPage($page['id'],$section['id']) ?>
@@ -190,16 +206,17 @@
                                         <div class="col-4 text-sm-start">
                                             <div class="form-group mb-3">
                                                 <label class="form-label">Interner name</label>
-                                                <input type="text" class="form-control" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>]['internalName']" value="<?php echo $data['internalName'] ?>" />
+                                                <input type="text" class="form-control" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][internalName]" value="<?php echo $data['internalName'] ?>" />
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label class="form-label">Titel</label>
-                                                <input type="text" class="form-control" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>]['title']" value="<?php echo $data['title'] ?>" />
+                                                <input type="text" class="form-control" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][title]" value="<?php echo $data['title'] ?>" />
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label class="form-label">Untertitel</label>
-                                                <input type="text" class="form-control" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>]['subTitle']" value="<?php echo $data['subTitle'] ?>" />
+                                                <input type="text" class="form-control" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][subTitle]" value="<?php echo $data['subTitle'] ?>" />
                                             </div>
+                                            <input type="hidden" class="type" name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][type]" value="<?php echo $data['type'] ?>" />
                                         </div>
                                         <div class="col-8">
                                             <?php $tmpContentDatas = json_decode($data['content']) ?>
@@ -209,20 +226,30 @@
                                             <?php unset($fields['internalName']) ?>
                                             <?php unset($fields['Title']) ?>
                                             <?php unset($fields['Description']) ?>
-                                            
+
                                             <div class="row">
                                                 <?php foreach($tmpContentDatas as $key=>$contentData): ?>
                                                     <div class="col-6 mb-3">
                                                         <div class="form-group">
                                                             <label><?php echo $key ?></label>
                                                             <?php if ($fields[$key] == 'image') { ?>
-                                                                <input name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]" type="text" value="<?php echo $contentData ?>" class="form-control" />
+                                                                <div class="input-group w-auto">
+                                                                    <input name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]" type="text" value="<?php echo $contentData ?>" class="form-control" />
+                                                                    <button class="btn btn-primary chooseImage" type="button" data-target="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]">
+                                                                        Select
+                                                                    </button>
+                                                                </div>
                                                             <?php } elseif ($fields[$key] == 'text') { ?>
                                                                 <textarea name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]" class="form-control" ><?php echo $contentData ?></textarea>
                                                             <?php } elseif ($fields[$key] == 'string') { ?>
                                                                 <input name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]" type="text" value="<?php echo $contentData ?>" class="form-control" />
                                                             <?php } elseif ($fields[$key] == 'link') { ?>
-                                                                <input name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]" type="text" value="<?php echo $contentData ?>" class="form-control" />
+                                                                <div class="input-group w-auto">
+                                                                    <input name="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]" type="text" value="<?php echo $contentData ?>" class="form-control" />
+                                                                    <button class="btn btn-primary chooseLink" type="button" data-target="content[<?php echo $section['id'] ?>][<?php echo $data['id'] ?>][<?php echo $key ?>]">
+                                                                        Select
+                                                                    </button>
+                                                                </div>
                                                             <?php } ?>
                                                         </div>
                                                     </div>
@@ -234,21 +261,6 @@
                                 </div>
                             <?php endforeach; ?>
                         <?php } ?>
-                    </div>
-
-                    <div class="col-6 elementChoose">
-                        Neues Element:
-                        <div class="input-group w-auto">
-                            <select class="chooseContentType form-control">
-                                <option value="none">Bitte wählen</option>
-                                <?php foreach($types as $type): ?>
-                                <option value="<?php echo $type['type'] ?>"><?php echo $type['name'] ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button class="btn btn-primary addContent" type="button">
-                                Hinzufügen
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -289,6 +301,61 @@
         </div>
     </div>
 </div>
+
+
+
+<div class="modal" id="mediaChoose" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Medias</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="$('#mediaChoose').hide();"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="target" value=""/>
+                <div class="row"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#mediaChoose').hide();">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal" id="linkChoose" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Link</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="$('#linkChoose').hide();"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="target" value=""/>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>Link Typ</label>
+                            <select id="chooseType" class="form-control">
+                                <option value="-">Bitte wählen</option>
+                                <option value="page">Seite</option>
+                                <option value="section">Sektion auf aktueller Seite</option>
+                                <option value="manual">Manuell</option>
+                        </div>
+                    </div>
+                    <div id="linkTypePage" class="col-12"></div>
+                    <div id="linkTypeSection" class="col-12"></div>
+                    <div id="linkTypeManual" class="col-12"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#linkChoose').hide();">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
         </div>

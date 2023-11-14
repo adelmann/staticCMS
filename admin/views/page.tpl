@@ -44,7 +44,7 @@
                     <textarea class="form-control" name="description">{{ $page['description'] }}</textarea>
                 </div>
             </div>
-            <input type="submit" class="btn btn-primary" value="speichern">
+            <input type="submit" class="btn btn-primary fixedSaveButton" value="speichern">
         </div>
     </div>
 
@@ -81,6 +81,20 @@
                 </div>
                 <div class="row mb-3 justify-content-md-center">
                     <div class="col-12"><hr></div>
+                    <div class="col-6 elementChoose">
+                        Neues Element:
+                        <div class="input-group w-auto">
+                            <select class="chooseContentType form-control">
+                                <option value="none">Bitte wählen</option>
+                                {% foreach($types as $type): %}
+                                <option value="{{ $type['type'] }}">{{ $type['name'] }}</option>
+                                {% endforeach; %}
+                            </select>
+                            <button class="btn btn-primary addContent" type="button">
+                                Hinzufügen
+                            </button>
+                        </div>
+                    </div>
                     <div class="col-12 elementForm">
                         <div class="contentElements">---</div>
                         {% $sectionContent = getSectionContentByPage($page['id'],$section['id']) %}
@@ -99,16 +113,17 @@
                                         <div class="col-4 text-sm-start">
                                             <div class="form-group mb-3">
                                                 <label class="form-label">Interner name</label>
-                                                <input type="text" class="form-control" name="content[{{$section['id']}}][{{$data['id']}}]['internalName']" value="{{$data['internalName']}}" />
+                                                <input type="text" class="form-control" name="content[{{$section['id']}}][{{$data['id']}}][internalName]" value="{{$data['internalName']}}" />
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label class="form-label">Titel</label>
-                                                <input type="text" class="form-control" name="content[{{$section['id']}}][{{$data['id']}}]['title']" value="{{$data['title']}}" />
+                                                <input type="text" class="form-control" name="content[{{$section['id']}}][{{$data['id']}}][title]" value="{{$data['title']}}" />
                                             </div>
                                             <div class="form-group mb-3">
                                                 <label class="form-label">Untertitel</label>
-                                                <input type="text" class="form-control" name="content[{{$section['id']}}][{{$data['id']}}]['subTitle']" value="{{$data['subTitle']}}" />
+                                                <input type="text" class="form-control" name="content[{{$section['id']}}][{{$data['id']}}][subTitle]" value="{{$data['subTitle']}}" />
                                             </div>
+                                            <input type="hidden" class="type" name="content[{{$section['id']}}][{{$data['id']}}][type]" value="{{$data['type']}}" />
                                         </div>
                                         <div class="col-8">
                                             {% $tmpContentDatas = json_decode($data['content']) %}
@@ -125,19 +140,23 @@
                                                         <div class="form-group">
                                                             <label>{{ $key }}</label>
                                                             {% if ($fields[$key] == 'image') { %}
-                                                            <div class="input-group w-auto">
-                                                                <input name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" type="text" value="{{$contentData}}" class="form-control" />
-                                                                <button class="btn btn-primary chooseImage" type="button" data-target="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]">
-                                                                    Select
-                                                                </button>
-                                                            </div>
-
+                                                                <div class="input-group w-auto">
+                                                                    <input name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" type="text" value="{{$contentData}}" class="form-control" />
+                                                                    <button class="btn btn-primary chooseImage" type="button" data-target="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]">
+                                                                        Select
+                                                                    </button>
+                                                                </div>
                                                             {% } elseif ($fields[$key] == 'text') { %}
                                                                 <textarea name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" class="form-control" >{{$contentData}}</textarea>
                                                             {% } elseif ($fields[$key] == 'string') { %}
                                                                 <input name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" type="text" value="{{$contentData}}" class="form-control" />
                                                             {% } elseif ($fields[$key] == 'link') { %}
-                                                                <input name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" type="text" value="{{$contentData}}" class="form-control" />
+                                                                <div class="input-group w-auto">
+                                                                    <input name="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]" type="text" value="{{$contentData}}" class="form-control" />
+                                                                    <button class="btn btn-primary chooseLink" type="button" data-target="content[{{$section['id']}}][{{$data['id']}}][{{$key}}]">
+                                                                        Select
+                                                                    </button>
+                                                                </div>
                                                             {% } %}
                                                         </div>
                                                     </div>
@@ -149,21 +168,6 @@
                                 </div>
                             {% endforeach; %}
                         {% } %}
-                    </div>
-
-                    <div class="col-6 elementChoose">
-                        Neues Element:
-                        <div class="input-group w-auto">
-                            <select class="chooseContentType form-control">
-                                <option value="none">Bitte wählen</option>
-                                {% foreach($types as $type): %}
-                                <option value="{{ $type['type'] }}">{{ $type['name'] }}</option>
-                                {% endforeach; %}
-                            </select>
-                            <button class="btn btn-primary addContent" type="button">
-                                Hinzufügen
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -206,5 +210,6 @@
 </div>
 
 {% include 'views/widget/mediaModal.tpl' %}
+{% include 'views/widget/linkModal.tpl' %}
 
 {% endblock %}
